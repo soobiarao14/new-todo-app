@@ -1,0 +1,79 @@
+Phase I CLI Todo App - Quick Demo Script
+=========================================
+
+This file demonstrates all features of the Phase I Todo application.
+
+Run: python src/todo_app.py
+
+Then follow these steps:
+
+Step 1: View empty task list
+  Choice: 1
+  Expected: "No tasks found"
+
+Step 2: Add first task
+  Choice: 2
+  Title: Buy groceries
+  Description: Milk, eggs, bread
+  Expected: "Task added successfully with ID 1"
+
+Step 3: Add second task
+  Choice: 2
+  Title: Call dentist
+  Description: Schedule annual checkup
+  Expected: "Task added successfully with ID 2"
+
+Step 4: Add task without description
+  Choice: 2
+  Title: Submit report
+  Description: [Just press Enter]
+  Expected: "Task added successfully with ID 3"
+
+Step 5: View all tasks
+  Choice: 1
+  Expected: See all 3 tasks with details and "Incomplete" status
+
+Step 6: Mark task 1 as complete
+  Choice: 5
+  Task ID: 1
+  Expected: "Task marked as complete"
+
+Step 7: View tasks to verify completion
+  Choice: 1
+  Expected: Task 1 shows "Complete", others show "Incomplete"
+
+Step 8: Update task 2
+  Choice: 3
+  Task ID: 2
+  New title: Call dentist - urgent
+  New description: Schedule ASAP
+  Expected: "Task updated successfully"
+
+Step 9: View tasks to verify update
+  Choice: 1
+  Expected: Task 2 shows updated title and description
+
+Step 10: Delete task 3
+  Choice: 4
+  Task ID: 3
+  Expected: "Task deleted successfully"
+
+Step 11: View tasks to verify deletion
+  Choice: 1
+  Expected: Only tasks 1 and 2 remain
+
+Step 12: Try to add task with empty title
+  Choice: 2
+  Title: [Just press Enter]
+  Expected: "Task title cannot be empty"
+
+Step 13: Try to delete non-existent task
+  Choice: 4
+  Task ID: 999
+  Expected: "Task ID not found"
+
+Step 14: Exit application
+  Choice: 6
+  Expected: "Goodbye!"
+
+All features demonstrated successfully!
