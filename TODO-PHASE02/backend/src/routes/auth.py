@@ -66,15 +66,18 @@ def set_auth_cookie(response: Response, token: str):
     Cookie settings:
     - httponly: True (prevent XSS access)
     - secure: True in production (HTTPS only)
-    - samesite: strict (prevent CSRF)
+    - samesite: none for cross-origin (production), lax for local
     - max_age: 3600 seconds (1 hour)
     """
+    import os
+    is_production = os.getenv("ENVIRONMENT", "development") == "production"
+
     response.set_cookie(
         key="auth_token",
         value=token,
         httponly=True,
-        secure=False,  # Set to True in production with HTTPS
-        samesite="strict",
+        secure=is_production,  # True for HTTPS in production
+        samesite="none" if is_production else "lax",  # none required for cross-origin cookies
         max_age=3600,  # 1 hour
     )
 
