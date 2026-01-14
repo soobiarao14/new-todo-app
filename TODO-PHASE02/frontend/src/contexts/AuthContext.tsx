@@ -87,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     setError(null);
-    setLoading(true);
+    setLoading(false);
 
     try {
       const response = await fetch(`${API_URL}/auth/signin`, {
