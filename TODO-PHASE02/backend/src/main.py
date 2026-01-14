@@ -3,12 +3,23 @@ FastAPI application instance with CORS middleware and authentication.
 Phase II Full-Stack Todo Application Backend.
 """
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.middleware.base import BaseHTTPMiddleware
 from src.config import config  # Load environment-specific configuration
 from src.middleware.auth import AuthMiddleware
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """Add security headers to all responses."""
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        return response
 from src.middleware.error_handler import (
     global_exception_handler,
     validation_exception_handler,
@@ -43,6 +54,9 @@ app.add_middleware(
 
 # Add authentication middleware
 app.add_middleware(AuthMiddleware)
+
+# Add security headers middleware
+app.add_middleware(SecurityHeadersMiddleware)
 
 
 
