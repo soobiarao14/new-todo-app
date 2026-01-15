@@ -1,0 +1,485 @@
+<!--
+SYNC IMPACT REPORT:
+==================
+Version Change: 1.0.0 → 2.0.0 (MAJOR)
+Date: 2026-01-11
+Rationale: Complete replacement of template with Evolution of Todo Phase II governance
+
+Modified Principles:
+- All placeholder principles replaced with Phase II-specific governance
+- Added: Spec-Driven Development Only
+- Added: Architecture First
+- Added: Reusability and Consistency
+- Added: Iterative Refinement
+- Added: No Manual Code Edits
+- Added: JWT Authentication Required
+- Added: User Isolation Enforcement
+- Added: Monorepo Structure Compliance
+
+Added Sections:
+- Vision (Phase II Full-Stack Web Application)
+- Technology Commitments (Phase Matrix)
+- Architecture Guidelines (Backend, Frontend, Database)
+- Quality Standards (Code, Testing, Documentation)
+
+Removed Sections:
+- Generic template placeholders
+
+Templates Requiring Updates:
+✅ plan-template.md - Constitution Check section already present
+✅ spec-template.md - Requirements section aligned
+✅ tasks-template.md - Task organization aligned
+⚠ CLAUDE.md - References constitution correctly
+
+Follow-up TODOs:
+- None - all placeholders resolved
+-->
+
+# Evolution of Todo – Project Constitution (Phase II: Full-Stack Web Application)
+
+## 1. Vision
+
+**Phase II Objective**: Transform the Evolution of Todo from an in-memory console application (Phase I) into a modern, production-ready, multi-user Todo full-stack web application with:
+
+- **Persistent Storage**: Neon Serverless PostgreSQL for reliable data persistence
+- **User Authentication**: Better Auth with stateless JWT for secure user sessions
+- **Full CRUD Operations**: Complete Create, Read, Update, Delete capabilities for todos
+- **Strict User Isolation**: Absolute data segregation ensuring no cross-user access
+
+**Implementation Mandate**: All code MUST be generated exclusively from written specifications using Claude Code and Spec-Kit Plus. Manual code writing is strictly forbidden.
+
+**Evolution Path**: Phase II builds upon Phase I (in-memory console app) to create a production-ready web system, laying the foundation for later AI integration, agent frameworks, and cloud-native orchestration in subsequent phases.
+
+---
+
+## 2. Core Principles
+
+### I. Spec-Driven Development Only
+
+**Non-Negotiable Rules**:
+- Every feature MUST begin with a written specification in `/specs/<feature-name>/spec.md`
+- No implementation work may commence without an approved specification
+- All architectural decisions MUST be documented in `/specs/<feature-name>/plan.md`
+- Task lists MUST be generated in `/specs/<feature-name>/tasks.md` before implementation
+
+**Rationale**: Specifications ensure clarity, enable review before implementation, reduce rework, and create an auditable trail of requirements and decisions. This prevents scope creep and ensures alignment with project goals.
+
+### II. Architecture First
+
+**Non-Negotiable Rules**:
+- System design MUST precede implementation
+- API contracts MUST be defined before backend implementation
+- Data models MUST be documented with relationships and constraints
+- Security model (authentication, authorization, data isolation) MUST be established upfront
+
+**Rationale**: Upfront architecture prevents costly refactoring, ensures scalability, maintains security posture, and enables parallel development of frontend and backend components.
+
+### III. Reusability and Consistency
+
+**Non-Negotiable Rules**:
+- All projects MUST include a `CLAUDE.md` file with agent instructions
+- Templates in `.specify/templates/` MUST be used for all artifact generation
+- Naming conventions MUST be consistent across all features and components
+- Shared utilities and patterns MUST be documented and reused
+
+**Rationale**: Consistency reduces cognitive load, accelerates onboarding, prevents duplication, and ensures maintainability across the monorepo.
+
+### IV. Iterative Refinement
+
+**Non-Negotiable Rules**:
+- Specifications MUST be refined through clarification questions until unambiguous
+- Plans MUST address all edge cases and failure modes identified
+- Tasks MUST be validated for completeness and correctness before execution
+- Code MUST be clean, type-safe, and production-ready (no placeholders or TODOs)
+
+**Rationale**: Iteration catches issues early when they're cheap to fix. Rushing to implementation creates technical debt that compounds over time.
+
+### V. Phase Isolation and Technology Discipline
+
+**Non-Negotiable Rules**:
+- Technologies MUST only be introduced in their designated phase (see Technology Commitments)
+- Phase I features (in-memory, console-only) MUST NOT be mixed with Phase II features
+- Phase III technologies (AI, agents, orchestration) are STRICTLY FORBIDDEN in Phase II
+- Each phase MUST complete fully before advancing to the next
+
+**Rationale**: Phase discipline prevents scope creep, maintains focus, ensures proper foundation building, and allows thorough validation at each stage.
+
+---
+
+## 3. Strict Rules
+
+### Rule 1: No Manual Code Edits
+
+**Enforcement**: All code MUST be generated by Claude Code following specifications. Manual editing violates the Spec-Driven Development principle and creates undocumented changes.
+
+**Exception Process**: If manual intervention is absolutely necessary, it MUST be:
+1. Documented in a Prompt History Record (PHR)
+2. Justified with reasoning
+3. Followed by spec update to reflect the change
+
+### Rule 2: JWT Authentication Required for All API Calls
+
+**Enforcement**: All frontend API requests MUST include `Authorization: Bearer <JWT>` header.
+
+**Technical Requirements**:
+- JWTs issued by Better Auth
+- JWTs MUST contain `user_id` claim
+- Token expiration MUST be enforced
+- Refresh token mechanism MUST be implemented
+
+**Exceptions**: Only public endpoints (signup, signin, health checks) may omit authentication.
+
+### Rule 3: Backend JWT Verification on Every Protected Route
+
+**Enforcement**: Every protected API endpoint MUST:
+1. Validate JWT signature using JWKS
+2. Check token expiration
+3. Extract `user_id` from verified token
+4. Use `user_id` for all data access authorization
+
+**Technical Requirements**:
+- Middleware MUST verify JWT before route handler execution
+- Invalid/expired tokens MUST return 401 Unauthorized
+- Missing tokens MUST return 401 Unauthorized
+
+### Rule 4: User Isolation Enforcement
+
+**Enforcement**: All data access MUST be filtered by authenticated `user_id` from JWT.
+
+**Technical Requirements**:
+- NO `user_id` in URL paths (derived only from JWT)
+- Database queries MUST include `WHERE user_id = <authenticated_user_id>`
+- Cross-user data access attempts MUST return 404 Not Found (not 403, to prevent enumeration)
+- User isolation MUST be enforced at the database query level, not application logic level
+
+**Testing**: Every feature MUST include tests verifying user isolation (User A cannot access User B's data).
+
+### Rule 5: Monorepo Structure Compliance
+
+**Enforcement**: Project structure MUST follow hackathon rules exactly:
+
+```
+TODO-PHASE02/
+├── frontend/          # Next.js application
+│   ├── src/
+│   │   ├── app/       # App router pages
+│   │   ├── components/
+│   │   └── lib/       # API client, utilities
+│   └── package.json
+├── backend/           # FastAPI application
+│   ├── src/
+│   │   ├── models/    # SQLModel entities
+│   │   ├── routes/    # API endpoints
+│   │   ├── services/  # Business logic
+│   │   └── auth/      # JWT verification
+│   └── pyproject.toml
+├── .specify/          # SpecKit Plus templates and scripts
+├── specs/             # Feature specifications
+├── history/           # PHRs and ADRs
+└── CLAUDE.md          # Agent instructions
+```
+
+**Prohibition**: Do NOT deviate from this structure without constitutional amendment.
+
+---
+
+## 4. Technology Commitments (Phase Matrix)
+
+### Phase I (Completed)
+**Status**: Foundation complete, read-only reference
+
+**Technology Stack**:
+- Runtime: Python console application
+- Storage: In-memory (no persistence)
+- Interface: Command-line only
+- Authentication: None
+- Database: None
+
+**Prohibitions**: No web frontend, no authentication, no database in Phase I.
+
+---
+
+### Phase II (CURRENT PHASE)
+**Status**: Active development, all technologies authorized
+
+**Backend Stack**:
+- **Language**: Python 3.11+
+- **Framework**: FastAPI
+- **Database**: Neon Serverless PostgreSQL
+- **ORM**: SQLModel (SQLAlchemy + Pydantic)
+- **Authentication**: Better Auth (JWT-based)
+- **Validation**: Pydantic models
+
+**Frontend Stack**:
+- **Framework**: Next.js 14+ (App Router)
+- **Language**: TypeScript
+- **UI Library**: React 18+
+- **Styling**: Tailwind CSS
+- **HTTP Client**: fetch with JWT interceptor
+
+**Database Stack**:
+- **Provider**: Neon Serverless PostgreSQL
+- **Connection**: psycopg2 or asyncpg
+- **Migrations**: Alembic (if needed)
+- **Schema**:
+  - `users` table (managed by Better Auth)
+  - `tasks` table with `user_id` foreign key
+
+**Architecture**:
+- REST API endpoints under `/api/tasks`
+- Stateless authentication with JWT
+- User isolation enforced at database layer
+- Frontend deployed separately from backend
+
+**Authorization Matrix**:
+✅ **Allowed**: Web frontend, authentication, PostgreSQL, REST APIs, user sessions
+❌ **Forbidden**: AI systems, agent frameworks, orchestration, cloud infrastructure automation
+
+---
+
+### Phase III and Later (FUTURE)
+**Status**: Not yet authorized, planning only
+
+**Planned Technologies** (requires constitutional amendment to activate):
+- AI/ML models for task suggestions
+- Agent frameworks for automation
+- Cloud infrastructure (AWS/Azure/GCP)
+- Container orchestration (Kubernetes)
+- Event streaming (Kafka/RabbitMQ)
+- Microservices architecture
+
+**Current Prohibition**: These technologies MUST NOT be introduced until Phase III constitutional amendment is ratified.
+
+---
+
+## 5. Architecture Guidelines
+
+### Backend Architecture
+
+**API Design**:
+- Base path: `/api/tasks`
+- Endpoints:
+  - `GET /api/tasks` - List user's tasks (filtered by JWT user_id)
+  - `POST /api/tasks` - Create new task (user_id from JWT)
+  - `GET /api/tasks/{task_id}` - Get single task (verify ownership)
+  - `PUT /api/tasks/{task_id}` - Update task (verify ownership)
+  - `DELETE /api/tasks/{task_id}` - Delete task (verify ownership)
+
+**Security Requirements**:
+- JWT verification middleware on all `/api/tasks/*` routes
+- Extract `user_id` from verified JWT claims
+- Never trust `user_id` from request body or query parameters
+- Return 404 for unauthorized access attempts (not 403)
+
+**Data Model**:
+```python
+# Conceptual model (implementation details in spec)
+User:
+  - id (UUID, primary key)
+  - email (unique, indexed)
+  - created_at, updated_at
+
+Task:
+  - id (UUID, primary key)
+  - user_id (UUID, foreign key to User, indexed)
+  - title (string, required)
+  - description (text, optional)
+  - completed (boolean, default false)
+  - created_at, updated_at
+```
+
+**Error Handling**:
+- 400 Bad Request - Invalid input
+- 401 Unauthorized - Missing or invalid JWT
+- 404 Not Found - Resource not found or unauthorized access
+- 500 Internal Server Error - Unexpected errors (logged securely)
+
+---
+
+### Frontend Architecture
+
+**Authentication Flow**:
+1. User signs up/signs in via Better Auth UI
+2. Backend returns JWT on successful authentication
+3. Frontend stores JWT securely (httpOnly cookie or localStorage with XSS protections)
+4. Frontend includes JWT in `Authorization: Bearer <token>` header on all API requests
+5. Frontend handles 401 responses by redirecting to login
+
+**API Client**:
+- Centralized API client module (`frontend/src/lib/api.ts`)
+- Automatic JWT injection into request headers
+- Automatic token refresh handling
+- Error handling with user-friendly messages
+
+**Component Structure**:
+- `app/` - Next.js App Router pages
+- `components/` - Reusable UI components
+- `lib/` - Utilities, API client, type definitions
+
+---
+
+### Database Architecture
+
+**Connection**:
+- Use Neon connection string from environment variable
+- Connection pooling enabled
+- SSL required for production
+
+**Schema Management**:
+- Migrations managed via Alembic (if schema changes needed)
+- Schema version tracked
+- Rollback strategy documented
+
+**Query Patterns**:
+- Always filter by `user_id` from JWT
+- Use parameterized queries to prevent SQL injection
+- Index on `user_id` for performance
+- Index on `created_at` for sorting
+
+---
+
+## 6. Quality Standards
+
+### Code Quality
+
+**Type Safety**:
+- Backend: Pydantic models for all request/response bodies
+- Frontend: TypeScript strict mode enabled
+- No `any` types without explicit justification
+
+**Formatting**:
+- Backend: Black formatter, isort for imports
+- Frontend: Prettier with consistent config
+- Line length: 88 characters (Python), 100 characters (TypeScript)
+
+**Linting**:
+- Backend: pylint, mypy for type checking
+- Frontend: ESLint with recommended rules
+- No warnings allowed in production builds
+
+### Testing Standards
+
+**Test Coverage** (if tests requested):
+- Unit tests for business logic
+- Integration tests for API endpoints
+- Contract tests for API schemas
+- User isolation tests (verify User A cannot access User B's data)
+
+**Test Organization**:
+- `tests/unit/` - Pure function tests
+- `tests/integration/` - Database and API tests
+- `tests/contract/` - API schema validation
+
+### Documentation Standards
+
+**Code Documentation**:
+- Public APIs: Docstrings with parameters, return types, exceptions
+- Complex logic: Inline comments explaining "why", not "what"
+- No commented-out code in production
+
+**Feature Documentation**:
+- `specs/<feature>/spec.md` - Requirements and user stories
+- `specs/<feature>/plan.md` - Architecture and decisions
+- `specs/<feature>/quickstart.md` - Getting started guide
+- `specs/<feature>/tasks.md` - Implementation checklist
+
+**Process Documentation**:
+- Prompt History Records (PHRs) in `history/prompts/`
+- Architecture Decision Records (ADRs) in `history/adr/`
+- `CLAUDE.md` - Agent instructions and project context
+
+---
+
+## 7. Security Requirements
+
+### Authentication Security
+
+**JWT Requirements**:
+- Algorithm: RS256 (asymmetric)
+- Expiration: 1 hour maximum
+- Refresh tokens: 7 days maximum
+- JWKS endpoint for public key verification
+
+**Password Security** (managed by Better Auth):
+- Minimum 8 characters
+- Hashed with bcrypt (cost factor 12+)
+- Never logged or exposed in errors
+
+### Data Security
+
+**User Isolation**:
+- Every query MUST filter by `user_id` from JWT
+- Database-level constraints enforced
+- Application-level checks as defense in depth
+
+**Input Validation**:
+- All user input validated against schemas
+- SQL injection prevention via parameterized queries
+- XSS prevention via output encoding
+
+**Secrets Management**:
+- Database credentials in environment variables
+- JWT signing keys in secure storage
+- Never commit secrets to repository
+- `.env` files in `.gitignore`
+
+### API Security
+
+**CORS Configuration**:
+- Whitelist frontend origin only
+- No wildcard origins in production
+
+**Rate Limiting**:
+- Per-user rate limits on authenticated endpoints
+- Per-IP rate limits on public endpoints
+
+---
+
+## 8. Governance
+
+### Constitutional Authority
+
+This constitution supersedes all other development practices, guidelines, or conventions. In case of conflict, constitutional provisions take precedence.
+
+### Amendment Process
+
+**Requirements for Amendment**:
+1. **Proposal**: Written amendment proposal with justification
+2. **Review**: Architectural review for impact assessment
+3. **Approval**: User approval required
+4. **Migration**: Migration plan for affected specifications and code
+5. **Documentation**: PHR created for constitutional amendment
+6. **Version Bump**: MAJOR version increment for breaking changes, MINOR for additions
+
+### Version Semantics
+
+**Version Format**: MAJOR.MINOR.PATCH
+
+- **MAJOR**: Backward-incompatible governance changes (principle removal/redefinition)
+- **MINOR**: New principles, sections, or material expansions
+- **PATCH**: Clarifications, wording improvements, typo fixes
+
+### Compliance Review
+
+**PR Requirements**:
+- All pull requests MUST verify constitutional compliance
+- Reviewers MUST check adherence to phase restrictions
+- Complexity MUST be justified against simplicity principles
+
+**Periodic Audits**:
+- Constitution alignment reviewed at phase transitions
+- Technology drift detected and corrected
+- Process improvements proposed via amendments
+
+### Runtime Guidance
+
+For day-to-day development guidance, consult:
+- `.specify/memory/constitution.md` (this file) - Principles and rules
+- `CLAUDE.md` - Agent-specific instructions and workflows
+- `.specify/templates/` - Artifact templates for specs, plans, tasks, PHRs, ADRs
+
+---
+
+**Version**: 2.0.0
+**Ratified**: 2026-01-11
+**Last Amended**: 2026-01-11

@@ -1,4 +1,4 @@
----
+J---
 id: 0001
 title: Initial constitution ratification
 stage: constitution

@@ -76,6 +76,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json();
       setUser(data.user);
+
+      // Set auth cookie on frontend domain (fixes cross-origin cookie issue)
+      if (data.token) {
+        await fetch("/api/auth/set-cookie", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: data.token }),
+        });
+      }
+
       router.push("/todos");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Signup failed");
@@ -106,6 +116,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json();
       setUser(data.user);
+
+      // Set auth cookie on frontend domain (fixes cross-origin cookie issue)
+      if (data.token) {
+        await fetch("/api/auth/set-cookie", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: data.token }),
+        });
+      }
+
       router.push("/todos");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign in failed");
@@ -122,6 +142,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await fetch(`${API_URL}/auth/signout`, {
         method: "POST",
         credentials: "include",
+      });
+
+      // Clear auth cookie on frontend domain
+      await fetch("/api/auth/clear-cookie", {
+        method: "POST",
       });
 
       setUser(null);
