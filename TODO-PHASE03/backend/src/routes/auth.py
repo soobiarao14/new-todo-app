@@ -7,7 +7,7 @@ For this implementation, we're using basic password hashing with bcrypt.
 """
 from fastapi import APIRouter, HTTPException, Response, Depends, status
 from sqlmodel import Session, select
-from passlib.context import CryptContext
+import bcrypt
 from datetime import datetime, timedelta
 from jose import jwt
 from uuid import uuid4
@@ -28,18 +28,19 @@ from fastapi import Request
 
 router = APIRouter()
 
-# Password hashing context (bcrypt with cost factor 12)
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 def hash_password(password: str) -> str:
-    """Hash password using bcrypt."""
-    return pwd_context.hash(password)
+    """Hash password using bcrypt with cost factor 12."""
+    password_bytes = password.encode('utf-8')
+    salt = bcrypt.gensalt(rounds=12)
+    return bcrypt.hashpw(password_bytes, salt).decode('utf-8')
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify password against hash."""
-    return pwd_context.verify(plain_password, hashed_password)
+    password_bytes = plain_password.encode('utf-8')
+    hashed_bytes = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(password_bytes, hashed_bytes)
 
 
 def create_jwt_token(user_id: UUID, email: str) -> str:
@@ -66,15 +67,18 @@ def set_auth_cookie(response: Response, token: str):
     Cookie settings:
     - httponly: True (prevent XSS access)
     - secure: True in production (HTTPS only)
-    - samesite: strict (prevent CSRF)
+    - samesite: none for cross-origin (production), lax for local
     - max_age: 3600 seconds (1 hour)
     """
+    import os
+    is_production = os.getenv("ENVIRONMENT", "development") == "production"
+
     response.set_cookie(
         key="auth_token",
         value=token,
         httponly=True,
-        secure=False,  # Set to True in production with HTTPS
-        samesite="strict",
+        secure=is_production,  # True for HTTPS in production
+        samesite="none" if is_production else "lax",  # none required for cross-origin cookies
         max_age=3600,  # 1 hour
     )
 

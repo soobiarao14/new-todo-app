@@ -106,6 +106,18 @@ export default function TodosPage() {
             </div>
             <div className="flex gap-3 animate-slide-in-right">
               <button
+                onClick={() => router.push("/chat")}
+                className="px-4 py-2 bg-white/20 text-white rounded-xl hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white transition-all duration-200 font-semibold backdrop-blur-sm"
+              >
+                💬 Chat
+              </button>
+              <button
+                onClick={() => router.push("/dashboard")}
+                className="px-4 py-2 bg-white/20 text-white rounded-xl hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white transition-all duration-200 font-semibold backdrop-blur-sm"
+              >
+                📊 Dashboard
+              </button>
+              <button
                 onClick={() => router.push("/todos/add")}
                 className="px-6 py-3 bg-white text-purple-600 rounded-2xl hover:bg-purple-50 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-white transition-all duration-300 font-bold shadow-xl transform"
               >

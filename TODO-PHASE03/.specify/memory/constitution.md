@@ -1,54 +1,52 @@
 <!--
 SYNC IMPACT REPORT:
 ==================
-Version Change: 1.0.0 → 2.0.0 (MAJOR)
-Date: 2026-01-11
-Rationale: Complete replacement of template with Evolution of Todo Phase II governance
+Version Change: 2.0.0 → 3.0.0 (MAJOR)
+Date: 2026-01-20
+Rationale: Introduction of Phase III with AI chatbot, MCP integration, OpenAI Agents SDK,
+           and new database models (Conversation, Message). This constitutes a major
+           architectural expansion requiring constitutional amendment.
 
 Modified Principles:
-- All placeholder principles replaced with Phase II-specific governance
-- Added: Spec-Driven Development Only
-- Added: Architecture First
-- Added: Reusability and Consistency
-- Added: Iterative Refinement
-- Added: No Manual Code Edits
-- Added: JWT Authentication Required
-- Added: User Isolation Enforcement
-- Added: Monorepo Structure Compliance
+- Phase Isolation and Technology Discipline: Updated to reflect Phase III authorization
+- Technology Commitments: Phase III now active, Phase IV added as future
 
 Added Sections:
-- Vision (Phase II Full-Stack Web Application)
-- Technology Commitments (Phase Matrix)
-- Architecture Guidelines (Backend, Frontend, Database)
-- Quality Standards (Code, Testing, Documentation)
+- Section 4.3: Phase III Technology Stack (AI Chatbot)
+- Section 5.4: AI Chatbot Architecture
+- Section 5.5: MCP Server Architecture
+- Section 5.6: Conversation Database Architecture
+- Section 7.3: AI Security Requirements
+- Strict Rules: Rule 6 (MCP Tools Only), Rule 7 (Stateless Architecture)
 
 Removed Sections:
-- Generic template placeholders
+- None (Phase II rules preserved in full)
 
 Templates Requiring Updates:
-✅ plan-template.md - Constitution Check section already present
-✅ spec-template.md - Requirements section aligned
-✅ tasks-template.md - Task organization aligned
-⚠ CLAUDE.md - References constitution correctly
+✅ plan-template.md - Constitution Check section compatible
+✅ spec-template.md - Requirements section compatible
+✅ tasks-template.md - Task organization compatible
+✅ CLAUDE.md - References constitution correctly
 
 Follow-up TODOs:
 - None - all placeholders resolved
 -->
 
-# Evolution of Todo – Project Constitution (Phase II: Full-Stack Web Application)
+# Evolution of Todo – Project Constitution (Phase III: Todo AI Chatbot)
 
 ## 1. Vision
 
-**Phase II Objective**: Transform the Evolution of Todo from an in-memory console application (Phase I) into a modern, production-ready, multi-user Todo full-stack web application with:
+**Phase III Objective**: Extend the Evolution of Todo with an AI-powered conversational chatbot that enables natural language task management. Building upon Phase II's production-ready web application:
 
-- **Persistent Storage**: Neon Serverless PostgreSQL for reliable data persistence
-- **User Authentication**: Better Auth with stateless JWT for secure user sessions
-- **Full CRUD Operations**: Complete Create, Read, Update, Delete capabilities for todos
-- **Strict User Isolation**: Absolute data segregation ensuring no cross-user access
+- **AI-Powered Conversations**: OpenAI Agents SDK for intelligent natural language understanding
+- **MCP Tool Integration**: Official MCP SDK for all task operations (add/list/update/delete/complete)
+- **Stateless Chat Architecture**: Every chat request is independent; no in-memory state
+- **Conversation Persistence**: Neon PostgreSQL stores conversations and messages for session continuity
+- **Phase II Integration**: Reuses existing Better Auth, REST endpoints, and database infrastructure
 
 **Implementation Mandate**: All code MUST be generated exclusively from written specifications using Claude Code and Spec-Kit Plus. Manual code writing is strictly forbidden.
 
-**Evolution Path**: Phase II builds upon Phase I (in-memory console app) to create a production-ready web system, laying the foundation for later AI integration, agent frameworks, and cloud-native orchestration in subsequent phases.
+**Evolution Path**: Phase III builds upon Phase II (full-stack web app) to add conversational AI capabilities, demonstrating intelligent agent integration while maintaining the secure, user-isolated architecture established in earlier phases.
 
 ---
 
@@ -99,7 +97,7 @@ Follow-up TODOs:
 **Non-Negotiable Rules**:
 - Technologies MUST only be introduced in their designated phase (see Technology Commitments)
 - Phase I features (in-memory, console-only) MUST NOT be mixed with Phase II features
-- Phase III technologies (AI, agents, orchestration) are STRICTLY FORBIDDEN in Phase II
+- Phase IV technologies (cloud orchestration, microservices) are STRICTLY FORBIDDEN in Phase III
 - Each phase MUST complete fully before advancing to the next
 
 **Rationale**: Phase discipline prevents scope creep, maintains focus, ensures proper foundation building, and allows thorough validation at each stage.
@@ -159,7 +157,7 @@ Follow-up TODOs:
 **Enforcement**: Project structure MUST follow hackathon rules exactly:
 
 ```
-TODO-PHASE02/
+TODO-PHASE03/
 ├── frontend/          # Next.js application
 │   ├── src/
 │   │   ├── app/       # App router pages
@@ -171,7 +169,9 @@ TODO-PHASE02/
 │   │   ├── models/    # SQLModel entities
 │   │   ├── routes/    # API endpoints
 │   │   ├── services/  # Business logic
-│   │   └── auth/      # JWT verification
+│   │   ├── auth/      # JWT verification
+│   │   ├── agents/    # AI agent logic (Phase III)
+│   │   └── mcp/       # MCP server and tools (Phase III)
 │   └── pyproject.toml
 ├── .specify/          # SpecKit Plus templates and scripts
 ├── specs/             # Feature specifications
@@ -180,6 +180,30 @@ TODO-PHASE02/
 ```
 
 **Prohibition**: Do NOT deviate from this structure without constitutional amendment.
+
+### Rule 6: MCP Tools Only for Task Operations (Phase III)
+
+**Enforcement**: The AI agent MUST NEVER modify database records directly. All task operations (create, read, update, delete, complete) MUST be executed through MCP tools.
+
+**Technical Requirements**:
+- MCP server exposes tools: `add_task`, `list_tasks`, `update_task`, `delete_task`, `complete_task`
+- Agent interprets user intent and calls appropriate MCP tools
+- Agent MUST confirm actions before execution
+- Errors from MCP tools MUST be handled gracefully with user-friendly messages
+
+**Rationale**: MCP abstraction ensures consistent business logic, audit trail, and prevents bypassing validation or user isolation.
+
+### Rule 7: Stateless Chat Architecture (Phase III)
+
+**Enforcement**: Every chat request MUST be independently processable. No in-memory state may persist between requests.
+
+**Technical Requirements**:
+- Chat endpoint receives `conversation_id` (optional) and `message` (required)
+- Conversation history loaded from database at request start
+- Response includes `conversation_id`, `response`, and `tool_calls`
+- All state persisted to database before response returns
+
+**Rationale**: Stateless architecture enables horizontal scaling, fault tolerance, and session resumption.
 
 ---
 
@@ -199,8 +223,8 @@ TODO-PHASE02/
 
 ---
 
-### Phase II (CURRENT PHASE)
-**Status**: Active development, all technologies authorized
+### Phase II (Completed)
+**Status**: Foundation complete, maintained for Phase III integration
 
 **Backend Stack**:
 - **Language**: Python 3.11+
@@ -231,30 +255,55 @@ TODO-PHASE02/
 - User isolation enforced at database layer
 - Frontend deployed separately from backend
 
+---
+
+### Phase III (CURRENT PHASE)
+**Status**: Active development, AI technologies authorized
+
+**AI/Agent Stack**:
+- **AI Framework**: OpenAI Agents SDK
+- **Tool Protocol**: Official MCP SDK (Model Context Protocol)
+- **Chat UI**: OpenAI ChatKit (frontend component)
+
+**Backend Additions**:
+- **Language**: Python 3.11+ (same as Phase II)
+- **Framework**: FastAPI (reuse Phase II)
+- **Agent Logic**: `backend/src/agents/` module
+- **MCP Server**: `backend/src/mcp/` module exposing task tools
+
+**Database Additions** (extend Phase II schema):
+- `conversation` table: `id`, `user_id`, `created_at`, `updated_at`
+- `message` table: `id`, `user_id`, `conversation_id`, `role` (user/assistant), `content`, `created_at`
+
+**New API Endpoint**:
+- `POST /api/chat` - Stateless chat endpoint
+  - Request: `{ conversation_id?: string, message: string }`
+  - Response: `{ conversation_id: string, response: string, tool_calls: ToolCall[] }`
+
 **Authorization Matrix**:
-✅ **Allowed**: Web frontend, authentication, PostgreSQL, REST APIs, user sessions
-❌ **Forbidden**: AI systems, agent frameworks, orchestration, cloud infrastructure automation
+✅ **Allowed**: OpenAI Agents SDK, MCP SDK, ChatKit UI, conversation/message tables, stateless chat API
+✅ **Reused from Phase II**: Better Auth, JWT, REST endpoints, tasks table, user isolation
+❌ **Forbidden**: Cloud orchestration, Kubernetes, event streaming, microservices decomposition
 
 ---
 
-### Phase III and Later (FUTURE)
+### Phase IV and Later (FUTURE)
 **Status**: Not yet authorized, planning only
 
 **Planned Technologies** (requires constitutional amendment to activate):
-- AI/ML models for task suggestions
-- Agent frameworks for automation
 - Cloud infrastructure (AWS/Azure/GCP)
 - Container orchestration (Kubernetes)
 - Event streaming (Kafka/RabbitMQ)
 - Microservices architecture
+- Advanced ML models for task prediction
 
-**Current Prohibition**: These technologies MUST NOT be introduced until Phase III constitutional amendment is ratified.
+**Current Prohibition**: These technologies MUST NOT be introduced until Phase IV constitutional amendment is ratified.
 
 ---
 
 ## 5. Architecture Guidelines
 
-### Backend Architecture
+### Backend Architecture (Phase II - Maintained)
 
 **API Design**:
 - Base path: `/api/tasks`
@@ -271,7 +320,7 @@ TODO-PHASE02/
 - Never trust `user_id` from request body or query parameters
 - Return 404 for unauthorized access attempts (not 403)
 
-**Data Model**:
+**Data Model (Phase II)**:
 ```python
 # Conceptual model (implementation details in spec)
 User:
@@ -296,7 +345,7 @@ Task:
 
 ---
 
-### Frontend Architecture
+### Frontend Architecture (Phase II - Maintained)
 
 **Authentication Flow**:
 1. User signs up/signs in via Better Auth UI
@@ -318,7 +367,7 @@ Task:
 
 ---
 
-### Database Architecture
+### Database Architecture (Phase II - Maintained)
 
 **Connection**:
 - Use Neon connection string from environment variable
@@ -335,6 +384,87 @@ Task:
 - Use parameterized queries to prevent SQL injection
 - Index on `user_id` for performance
 - Index on `created_at` for sorting
+
+---
+
+### AI Chatbot Architecture (Phase III)
+
+**Chat Flow**:
+1. User sends message to `POST /api/chat`
+2. Backend extracts `user_id` from JWT
+3. If `conversation_id` provided, load conversation history from database
+4. If no `conversation_id`, create new conversation record
+5. Store user message in `message` table
+6. Pass conversation context to OpenAI Agent
+7. Agent interprets user intent and determines required MCP tool calls
+8. Agent confirms action with user (if destructive)
+9. Execute MCP tool calls (add/list/update/delete/complete task)
+10. Store assistant response in `message` table
+11. Return response with `conversation_id`, `response`, and `tool_calls`
+
+**Agent Rules**:
+- Agent MUST interpret natural language and map to correct MCP tools
+- Agent MUST confirm destructive actions (delete, complete) before execution
+- Agent MUST handle errors gracefully with user-friendly messages
+- Agent MUST respect user isolation (only access authenticated user's tasks)
+- Agent MUST NOT bypass MCP tools to modify database directly
+
+**Conversation Persistence**:
+- Conversations enable session continuity across requests
+- Message history provides context for follow-up questions
+- User can resume previous conversations by providing `conversation_id`
+
+---
+
+### MCP Server Architecture (Phase III)
+
+**Tool Definitions**:
+```python
+# MCP tools exposed by backend/src/mcp/
+add_task(title: str, description: str | None) -> Task
+list_tasks(completed: bool | None) -> list[Task]
+update_task(task_id: str, title: str | None, description: str | None) -> Task
+delete_task(task_id: str) -> bool
+complete_task(task_id: str) -> Task
+```
+
+**Security**:
+- All MCP tools receive `user_id` from authenticated JWT context
+- Tools enforce user isolation at query level
+- Tools validate input and return structured errors
+- Tools log all operations for audit trail
+
+**Error Handling**:
+- Tool not found: Return helpful message listing available tools
+- Invalid parameters: Return validation errors with field details
+- Task not found: Return 404-equivalent structured error
+- Permission denied: Return 404-equivalent (no enumeration)
+
+---
+
+### Conversation Database Architecture (Phase III)
+
+**Schema Additions**:
+```python
+Conversation:
+  - id (UUID, primary key)
+  - user_id (UUID, foreign key to User, indexed)
+  - created_at (timestamp)
+  - updated_at (timestamp)
+
+Message:
+  - id (UUID, primary key)
+  - user_id (UUID, foreign key to User, indexed)
+  - conversation_id (UUID, foreign key to Conversation, indexed)
+  - role (enum: 'user', 'assistant')
+  - content (text, required)
+  - created_at (timestamp)
+```
+
+**Query Patterns**:
+- Load conversation: `WHERE conversation_id = ? AND user_id = ?`
+- Load messages: `WHERE conversation_id = ? ORDER BY created_at ASC`
+- User isolation enforced on both Conversation and Message queries
 
 ---
 
@@ -364,11 +494,13 @@ Task:
 - Integration tests for API endpoints
 - Contract tests for API schemas
 - User isolation tests (verify User A cannot access User B's data)
+- Agent behavior tests (verify correct tool selection)
 
 **Test Organization**:
 - `tests/unit/` - Pure function tests
 - `tests/integration/` - Database and API tests
 - `tests/contract/` - API schema validation
+- `tests/agent/` - AI agent behavior tests (Phase III)
 
 ### Documentation Standards
 
@@ -420,6 +552,7 @@ Task:
 **Secrets Management**:
 - Database credentials in environment variables
 - JWT signing keys in secure storage
+- OpenAI API keys in environment variables (Phase III)
 - Never commit secrets to repository
 - `.env` files in `.gitignore`
 
@@ -432,6 +565,25 @@ Task:
 **Rate Limiting**:
 - Per-user rate limits on authenticated endpoints
 - Per-IP rate limits on public endpoints
+- Chat endpoint rate limiting to prevent abuse (Phase III)
+
+### AI Security (Phase III)
+
+**Prompt Injection Prevention**:
+- User messages treated as untrusted input
+- Agent instructions separated from user content
+- No dynamic prompt construction from user input
+
+**Tool Execution Safety**:
+- MCP tools validate all parameters
+- User isolation enforced in tool execution
+- Destructive actions require confirmation
+- All tool calls logged for audit
+
+**Data Leakage Prevention**:
+- Agent only accesses authenticated user's data
+- Conversation history scoped to user
+- No cross-user data exposure via agent responses
 
 ---
 
@@ -455,8 +607,8 @@ This constitution supersedes all other development practices, guidelines, or con
 
 **Version Format**: MAJOR.MINOR.PATCH
 
-- **MAJOR**: Backward-incompatible governance changes (principle removal/redefinition)
-- **MINOR**: New principles, sections, or material expansions
+- **MAJOR**: Backward-incompatible governance changes (principle removal/redefinition, new phase activation)
+- **MINOR**: New principles, sections, or material expansions within current phase
 - **PATCH**: Clarifications, wording improvements, typo fixes
 
 ### Compliance Review
@@ -480,6 +632,6 @@ For day-to-day development guidance, consult:
 
 ---
 
-**Version**: 2.0.0
+**Version**: 3.0.0
 **Ratified**: 2026-01-11
-**Last Amended**: 2026-01-11
+**Last Amended**: 2026-01-20

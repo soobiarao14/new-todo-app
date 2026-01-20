@@ -13,6 +13,9 @@ dependencies = [
     "pydantic[email]>=2.5.0",
     "httpx>=0.26.0",
     "passlib[bcrypt]>=1.7.4",
+    # Phase III: AI Chatbot dependencies
+    "openai>=1.0.0",
+    "mcp>=0.1.0",
 ]
 
 [project.optional-dependencies]

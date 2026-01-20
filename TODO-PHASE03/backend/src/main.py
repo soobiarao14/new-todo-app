@@ -3,12 +3,23 @@ FastAPI application instance with CORS middleware and authentication.
 Phase II Full-Stack Todo Application Backend.
 """
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.middleware.base import BaseHTTPMiddleware
 from src.config import config  # Load environment-specific configuration
 from src.middleware.auth import AuthMiddleware
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """Add security headers to all responses."""
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        return response
 from src.middleware.error_handler import (
     global_exception_handler,
     validation_exception_handler,
@@ -16,6 +27,8 @@ from src.middleware.error_handler import (
 )
 from src.routes.auth import router as auth_router
 from src.db import create_db_and_tables
+# Import models to ensure tables are registered with SQLModel before create_db_and_tables()
+from src.models import User, Todo, Conversation, Message
 
 # Initialize FastAPI application
 app = FastAPI(
@@ -26,31 +39,34 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# Register exception handlers
-app.add_exception_handler(Exception, global_exception_handler)
-app.add_exception_handler(RequestValidationError, validation_exception_handler)
-app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+allowed_origins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3000",
+    "http://192.168.2.107:3000",
+    "https://new-todo-app-kappa.vercel.app",
+]
 
-# Configure CORS middleware (must be before auth middleware)
-# IMPORTANT: In production, replace with actual frontend domain
-allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+# IMPORTANT: Middleware is executed in REVERSE order of addition.
+# Add inner middlewares first, CORS middleware last (so it runs first/outermost).
 
+# Add security headers middleware (runs third - innermost)
+app.add_middleware(SecurityHeadersMiddleware)
+
+# Add authentication middleware (runs second)
+app.add_middleware(AuthMiddleware)
+
+# Add CORS middleware LAST so it runs FIRST (outermost layer)
+# This ensures CORS headers are set before any other middleware can reject the request
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_credentials=True,  # Required for httpOnly cookies
-    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization"],
-    expose_headers=["Content-Type"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# Add authentication middleware
-app.add_middleware(AuthMiddleware)
 
-# Register routers
-app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
-from src.routes.todos import router as todos_router
-app.include_router(todos_router, prefix="/api/tasks", tags=["Todos"])
 
 
 @app.on_event("startup")
@@ -80,8 +96,11 @@ async def health_check():
     }
 
 
-# TODO: Register routers here as they are created
-# from src.routes.auth import router as auth_router
-# from src.routes.todos import router as todos_router
-# app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
-# app.include_router(todos_router, prefix="/api/tasks", tags=["Todos"])
+# Register routers
+from src.routes.auth import router as auth_router
+from src.routes.todos import router as todos_router
+from src.routes.chat import router as chat_router
+app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+app.include_router(todos_router, prefix="/api/tasks", tags=["Todos"])
+# Phase III: AI Chatbot routes
+app.include_router(chat_router, prefix="/api", tags=["Chat"])

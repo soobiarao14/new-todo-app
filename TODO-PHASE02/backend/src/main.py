@@ -40,6 +40,8 @@ app = FastAPI(
 allowed_origins = [
     "http://localhost:3000",
     "http://localhost:3001",
+    "http://127.0.0.1:3000",
+    "http://192.168.2.107:3000",
     "https://new-todo-app-kappa.vercel.app",
 ]
 
