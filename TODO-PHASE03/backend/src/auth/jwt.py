@@ -4,7 +4,7 @@ Verifies signature, expiration, and extracts user_id from 'sub' claim.
 """
 from jose import jwt, jwk, JWTError
 from jose.utils import base64url_decode
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, Optional
 from uuid import UUID
 from src.auth.jwks import jwks_fetcher
@@ -46,8 +46,8 @@ async def verify_jwt(token: str) -> Dict:
         # Verify expiration manually (python-jose does this, but double-check)
         exp = payload.get("exp")
         if exp:
-            exp_datetime = datetime.fromtimestamp(exp)
-            if datetime.utcnow() > exp_datetime:
+            exp_datetime = datetime.fromtimestamp(exp, tz=timezone.utc)
+            if datetime.now(timezone.utc) > exp_datetime:
                 raise JWTVerificationError("JWT token has expired")
 
         return payload

@@ -3,7 +3,7 @@ JWKS (JSON Web Key Set) fetcher for retrieving and caching public keys from Bett
 """
 import httpx
 from typing import Dict, Optional, List
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from src.auth.config import auth_config
 
 

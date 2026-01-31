@@ -238,23 +238,35 @@ async def get_dashboard_stats(
 
     **Authentication**: Required (JWT Bearer token)
     """
-    chat_service = ChatService(session)
-    todo_service = TodoService(session)
+    try:
+        chat_service = ChatService(session)
+        todo_service = TodoService(session)
 
-    # Get task counts
-    all_tasks = todo_service.list_by_user(user_id)
-    total_tasks = len(all_tasks)
-    completed_tasks = len([t for t in all_tasks if t.completed])
-    pending_tasks = total_tasks - completed_tasks
+        # Get task counts
+        all_tasks = todo_service.list_by_user(user_id)
+        total_tasks = len(all_tasks)
+        completed_tasks = len([t for t in all_tasks if t.completed])
+        pending_tasks = total_tasks - completed_tasks
 
-    # Get conversation/message counts
-    total_conversations = chat_service.get_conversation_count(user_id)
-    messages_today = chat_service.get_messages_today_count(user_id)
+        # Get conversation/message counts
+        total_conversations = chat_service.get_conversation_count(user_id)
+        messages_today = chat_service.get_messages_today_count(user_id)
 
-    return DashboardStatsResponse(
-        total_tasks=total_tasks,
-        completed_tasks=completed_tasks,
-        pending_tasks=pending_tasks,
-        total_conversations=total_conversations,
-        messages_today=messages_today,
-    )
+        return DashboardStatsResponse(
+            total_tasks=total_tasks,
+            completed_tasks=completed_tasks,
+            pending_tasks=pending_tasks,
+            total_conversations=total_conversations,
+            messages_today=messages_today,
+        )
+    except Exception as e:
+        logger.error(f"Error getting dashboard stats: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "error": {
+                    "code": "INTERNAL_ERROR",
+                    "message": "Failed to retrieve dashboard statistics",
+                }
+            },
+        )

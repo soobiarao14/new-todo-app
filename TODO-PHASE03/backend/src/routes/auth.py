@@ -8,7 +8,7 @@ For this implementation, we're using basic password hashing with bcrypt.
 from fastapi import APIRouter, HTTPException, Response, Depends, status
 from sqlmodel import Session, select
 import bcrypt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from jose import jwt
 from uuid import uuid4
 from src.schemas.auth import (
@@ -51,8 +51,8 @@ def create_jwt_token(user_id: UUID, email: str) -> str:
     payload = {
         "sub": str(user_id),  # User ID in 'sub' claim
         "email": email,
-        "exp": datetime.utcnow() + timedelta(hours=1),  # 1 hour expiration
-        "iat": datetime.utcnow(),  # Issued at
+        "exp": datetime.now(timezone.utc) + timedelta(hours=1),  # 1 hour expiration
+        "iat": datetime.now(timezone.utc),  # Issued at
     }
 
     # Sign token with RS256 algorithm (would use Better Auth's key in production)
@@ -121,7 +121,7 @@ async def signup(
         # Create user
         print(f"[SIGNUP] Creating user object...")
         new_user = User(
-            id=uuid4(), email=signup_data.email, password_hash=password_hash, created_at=datetime.utcnow(), updated_at=datetime.utcnow()
+            id=uuid4(), email=signup_data.email, password_hash=password_hash, created_at=datetime.now(timezone.utc), updated_at=datetime.now(timezone.utc)
         )
 
         print(f"[SIGNUP] Adding user to session...")

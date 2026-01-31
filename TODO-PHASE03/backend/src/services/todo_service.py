@@ -5,7 +5,7 @@ All operations enforce user isolation at the database query level.
 from sqlmodel import Session, select
 from uuid import UUID
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from src.models.todo import Todo
 from src.schemas.todo import TodoCreateRequest, TodoUpdateRequest
 
@@ -66,8 +66,8 @@ class TodoService:
             title=request.title,
             description=request.description,
             completed=False,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
         )
 
         self.session.add(todo)
@@ -102,7 +102,7 @@ class TodoService:
         if request.description is not None:
             todo.description = request.description
 
-        todo.updated_at = datetime.utcnow()
+        todo.updated_at = datetime.now(timezone.utc)
 
         self.session.add(todo)
         self.session.commit()
@@ -152,7 +152,7 @@ class TodoService:
             return None
 
         todo.completed = not todo.completed
-        todo.updated_at = datetime.utcnow()
+        todo.updated_at = datetime.now(timezone.utc)
 
         self.session.add(todo)
         self.session.commit()

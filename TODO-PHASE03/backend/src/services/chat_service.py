@@ -7,7 +7,7 @@ All operations enforce user isolation at the database query level.
 from sqlmodel import Session, select, func
 from uuid import UUID
 from typing import List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from src.models.conversation import Conversation
 from src.models.message import Message
@@ -34,8 +34,8 @@ class ChatService:
         conversation = Conversation(
             user_id=user_id,
             title=title,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
         )
 
         self.session.add(conversation)
@@ -157,7 +157,7 @@ class ChatService:
             role=role,
             content=content,
             tool_calls=tool_calls,
-            created_at=datetime.utcnow(),
+            created_at=datetime.now(timezone.utc),
         )
 
         self.session.add(message)
@@ -165,7 +165,7 @@ class ChatService:
         # Update conversation's updated_at
         conversation = self.get_conversation(conversation_id, user_id)
         if conversation:
-            conversation.updated_at = datetime.utcnow()
+            conversation.updated_at = datetime.now(timezone.utc)
             self.session.add(conversation)
 
         self.session.commit()
@@ -233,7 +233,7 @@ class ChatService:
             return None
 
         conversation.title = title[:200]  # Truncate to max length
-        conversation.updated_at = datetime.utcnow()
+        conversation.updated_at = datetime.now(timezone.utc)
 
         self.session.add(conversation)
         self.session.commit()
@@ -313,7 +313,7 @@ class ChatService:
 
     def get_messages_today_count(self, user_id: UUID) -> int:
         """Get the number of messages sent today by the user."""
-        today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
 
         statement = (
             select(func.count(Message.id))

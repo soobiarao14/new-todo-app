@@ -2,7 +2,7 @@
 Message model for conversation messages.
 Phase III: Todo AI Chatbot - NEW FILE (does not modify Phase II)
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Any
 from uuid import UUID, uuid4
 from sqlmodel import Field, SQLModel, Column
@@ -28,7 +28,7 @@ class Message(SQLModel, table=True):
     role: str = Field(max_length=20, nullable=False)  # 'user' or 'assistant'
     content: str = Field(nullable=False)
     tool_calls: Optional[dict] = Field(default=None, sa_column=Column(JSONB))
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Config:
         json_encoders = {datetime: lambda v: v.isoformat()}

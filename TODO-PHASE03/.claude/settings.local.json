@@ -6,7 +6,8 @@
       "Bash(\"venv/Scripts/python.exe\" -m uvicorn:*)",
       "Bash(\"venv/Scripts/python.exe\":*)",
       "Bash(\"venv/Scripts/python.exe\" -c:*)",
-      "Bash(netstat:*)"
+      "Bash(netstat:*)",
+      "Bash(python:*)"
     ]
   }
 }

@@ -104,3 +104,11 @@ app.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 app.include_router(todos_router, prefix="/api/tasks", tags=["Todos"])
 # Phase III: AI Chatbot routes
 app.include_router(chat_router, prefix="/api", tags=["Chat"])
+
+
+# chnagecode...............main ne kiya h
+
+
+
+
+

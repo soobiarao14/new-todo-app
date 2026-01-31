@@ -1,7 +1,7 @@
 """
 Todo model with user isolation enforced at the database level.
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID, uuid4
 from sqlmodel import Field, SQLModel, Relationship
@@ -21,8 +21,8 @@ class Todo(SQLModel, table=True):
     title: str = Field(max_length=200, nullable=False)
     description: Optional[str] = Field(default=None, max_length=2000)
     completed: bool = Field(default=False, nullable=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Config:
         # Ensure timestamps are always in UTC
