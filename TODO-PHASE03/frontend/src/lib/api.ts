@@ -113,7 +113,7 @@
 
 // const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     // frontend/src/utils/api.ts
-   export const API_BASE_URL = "http://localhost:8000";// ya localhost:8000;
+   export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 
 
