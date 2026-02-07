@@ -1,0 +1,13 @@
+PostgreSQL database has been deployed.
+
+Connection details:
+  Host: {{ include "todo-database.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+  Port: {{ .Values.service.port }}
+  Database: {{ .Values.secrets.POSTGRES_DB }}
+  Username: {{ .Values.secrets.POSTGRES_USER }}
+
+To verify the database is running:
+  kubectl get pods -l app.kubernetes.io/name={{ include "todo-database.name" . }}
+
+To connect to the database:
+  kubectl exec -it $(kubectl get pods -l app.kubernetes.io/name={{ include "todo-database.name" . }} -o jsonpath='{.items[0].metadata.name}') -- psql -U {{ .Values.secrets.POSTGRES_USER }} -d {{ .Values.secrets.POSTGRES_DB }}

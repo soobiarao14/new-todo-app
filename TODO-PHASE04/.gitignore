@@ -1,0 +1,21 @@
+# Environment files with secrets
+.env
+.env.local
+.env.production
+*.env.production
+
+# Node
+node_modules/
+.next/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Claude temp artifacts
+cWindowsTEMPclaude-*
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "todo-backend.fullname" . }}
+  labels:
+    {{- include "todo-backend.labels" . | nindent 4 }}
+data:
+  ALLOWED_ORIGINS: {{ .Values.config.ALLOWED_ORIGINS | quote }}
+  ENVIRONMENT: {{ .Values.config.ENVIRONMENT | quote }}
+  BETTER_AUTH_BASE_URL: {{ .Values.config.BETTER_AUTH_BASE_URL | quote }}
+  BETTER_AUTH_JWKS_URL: {{ .Values.config.BETTER_AUTH_JWKS_URL | quote }}

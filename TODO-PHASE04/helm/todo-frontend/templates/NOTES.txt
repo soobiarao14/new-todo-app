@@ -1,0 +1,24 @@
+Todo Frontend has been deployed.
+
+{{- if .Values.ingress.enabled }}
+
+Access the application at:
+  http://{{ .Values.ingress.host }}
+
+Make sure to add the following to your hosts file:
+  <minikube-ip> {{ .Values.ingress.host }}
+
+Get the Minikube IP with:
+  minikube ip
+
+{{- else }}
+
+To access the frontend, run:
+  kubectl port-forward svc/{{ include "todo-frontend.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }}
+
+Then open http://localhost:{{ .Values.service.port }}
+
+{{- end }}
+
+To verify the frontend is running:
+  kubectl get pods -l app.kubernetes.io/name={{ include "todo-frontend.name" . }}

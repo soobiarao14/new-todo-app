@@ -1,0 +1,65 @@
+# Helm Values Contract: todo-frontend
+# This file documents the expected values.yaml structure for the frontend chart.
+# It serves as a contract between the plan and the Helm chart implementation.
+
+replicaCount: 2
+
+image:
+  repository: todo-frontend
+  tag: "latest"
+  pullPolicy: Never  # Images loaded via minikube image load
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: true
+  className: nginx
+  host: todo.local
+  annotations: {}
+  paths:
+    - path: /
+      pathType: Prefix
+      backend:
+        service:
+          name: todo-frontend
+          port: 3000
+    - path: /api
+      pathType: Prefix
+      backend:
+        service:
+          name: todo-backend
+          port: 8000
+    - path: /auth
+      pathType: Prefix
+      backend:
+        service:
+          name: todo-backend
+          port: 8000
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 250m
+    memory: 256Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: 3000
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /
+    port: 3000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3

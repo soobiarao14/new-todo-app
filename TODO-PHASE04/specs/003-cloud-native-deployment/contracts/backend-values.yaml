@@ -1,0 +1,51 @@
+# Helm Values Contract: todo-backend
+# This file documents the expected values.yaml structure for the backend chart.
+# It serves as a contract between the plan and the Helm chart implementation.
+
+replicaCount: 2
+
+image:
+  repository: todo-backend
+  tag: "latest"
+  pullPolicy: Never  # Images loaded via minikube image load
+
+service:
+  type: ClusterIP
+  port: 8000
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+# Non-sensitive configuration (ConfigMap)
+config:
+  ALLOWED_ORIGINS: "http://todo.local"
+  ENVIRONMENT: "production"
+
+# Sensitive configuration (Secret)
+secrets:
+  DATABASE_URL: "postgresql://todo_user:todo_pass@todo-database:5432/todo_db"
+  BETTER_AUTH_SECRET: "change-me-in-production"
+  OPENAI_API_KEY: ""  # Must be overridden at install time

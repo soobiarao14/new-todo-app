@@ -1,0 +1,47 @@
+replicaCount: 1
+
+image:
+  repository: postgres
+  tag: "15-alpine"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5432
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+livenessProbe:
+  tcpSocket:
+    port: 5432
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  tcpSocket:
+    port: 5432
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+secrets:
+  POSTGRES_USER: "todo_user"
+  POSTGRES_PASSWORD: "todo_pass"
+  POSTGRES_DB: "todo_db"
+
+persistence:
+  enabled: true
+  storageClass: "standard"
+  size: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  mountPath: /var/lib/postgresql/data

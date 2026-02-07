@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ping:*)",
+      "Bash(curl:*)",
+      "Bash(\"venv/Scripts/python.exe\" -m uvicorn:*)",
+      "Bash(\"venv/Scripts/python.exe\":*)",
+      "Bash(\"venv/Scripts/python.exe\" -c:*)",
+      "Bash(netstat:*)",
+      "Bash(python:*)"
+    ]
+  }
+}

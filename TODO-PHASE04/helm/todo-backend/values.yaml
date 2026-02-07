@@ -1,0 +1,47 @@
+replicaCount: 2
+
+image:
+  repository: todo-backend
+  tag: "1.0.0"
+  pullPolicy: Never
+
+service:
+  type: ClusterIP
+  port: 8000
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+config:
+  ALLOWED_ORIGINS: "http://todo.local"
+  ENVIRONMENT: "production"
+  BETTER_AUTH_BASE_URL: "http://todo.local"
+  BETTER_AUTH_JWKS_URL: "http://todo-frontend:3000/api/auth/.well-known/jwks.json"
+
+secrets:
+  DATABASE_URL: "postgresql://todo_user:todo_pass@todo-database:5432/todo_db"
+  BETTER_AUTH_SECRET: "change-me-in-production"
+  OPENAI_API_KEY: ""

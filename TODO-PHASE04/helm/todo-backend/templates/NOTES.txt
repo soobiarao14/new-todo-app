@@ -1,0 +1,13 @@
+Todo Backend has been deployed.
+
+Service URL (in-cluster):
+  http://{{ include "todo-backend.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.port }}
+
+To verify the backend is running:
+  kubectl get pods -l app.kubernetes.io/name={{ include "todo-backend.name" . }}
+
+To check health endpoint:
+  kubectl exec -it $(kubectl get pods -l app.kubernetes.io/name={{ include "todo-backend.name" . }} -o jsonpath='{.items[0].metadata.name}') -- curl -s http://localhost:8000/health
+
+To view logs:
+  kubectl logs -l app.kubernetes.io/name={{ include "todo-backend.name" . }} -f
